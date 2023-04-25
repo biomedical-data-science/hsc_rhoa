@@ -7,7 +7,10 @@ import pandas as pd
 
 # loads necessary code functions from hsc_spatial_stats.pys
 # all documentation for algorithms are found in the python code
-from hsc_spatial_stats import *
+from hsc_spatial_stats import (
+    czi_image_preprocessing,
+    get_output_filename_with_subfolder,
+)
 
 
 # choose the new resolution and normalization for CZI preprocessing
