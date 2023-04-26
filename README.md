@@ -19,7 +19,7 @@ Jupyter Notebooks:
 
 ## Dependencies
 
-The code was run in a local machine using a conda environment with the following packages and versions:
+The code was developed in a local machine using a conda environment with the following packages and versions:
 
 `seaborn==0.11.2`
 

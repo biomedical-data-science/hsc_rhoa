@@ -1,6 +1,3 @@
-# # Notebook to load CZI microscope images,
-# # preprocess them and save them as NPZ
-
 import os
 from glob import glob
 import pandas as pd
@@ -21,10 +18,8 @@ normalization = "none"
 conditions = [
     "old",
     "treated_RhoAi",
-    "treated_NaB",
     "compressed_8um",
     "compressed_3um",
-    "RhoA_KO",
     "young",
     "compressed_5um",
 ]
