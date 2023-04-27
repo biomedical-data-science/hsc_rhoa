@@ -179,6 +179,7 @@ interesting_3d = [
 
 
 def load_czi_image(czi_filepath, channel_name="Ch1-T2"):
+    """Load a .czi image and return the image data and physical pixel sizes"""
     czi_img = AICSImage(czi_filepath)
 
     if "get_channel_names" in dir(czi_img):
@@ -196,11 +197,14 @@ def load_czi_image(czi_filepath, channel_name="Ch1-T2"):
         return "", ""
 
     channel_num = int(np.where(np.asarray(channel_names_list) == channel_name)[0])
+    img = czi_img.get_image_data("ZXY", C=channel_num)
 
-    return (czi_img.get_image_data("ZXY", C=channel_num), czi_img.physical_pixel_sizes)
+    return (img, czi_img.physical_pixel_sizes)
 
 
 def resize_image(img, pixel_sizes, new_res=0.1, resize_z=True):
+    """Given an image and the original pixel sizes, return the image resized
+    to the new resolution"""
     new_shape = (
         np.round(img.shape[0] * pixel_sizes.Z / new_res),
         np.round(img.shape[1] * pixel_sizes.X / new_res),
@@ -218,12 +222,6 @@ def resize_image(img, pixel_sizes, new_res=0.1, resize_z=True):
     # downsampling. It is crucial to filter when downsampling the image to
     # avoid aliasing artifacts. If not specified, it is set to True when
     # downsampling an image whose data type is not bool.
-
-    # Antialiasing_sigma:
-    # Standard deviation for Gaussian filtering used when anti-aliasing.
-    # By default, this value is chosen as (s - 1) / 2 where s is the
-    # downsampling factor, where s > 1. For the up-size case, s < 1, no
-    # anti-aliasing is performed prior to rescaling.
     if resize_z:
         img = ski.transform.resize(
             img, new_shape, preserve_range=True, anti_aliasing=True
@@ -242,6 +240,7 @@ def resize_image(img, pixel_sizes, new_res=0.1, resize_z=True):
 
 
 def zscore_normalization(im, mask):
+    """Perform Z-score normalization (Standardization)"""
     roi = im[mask.astype(bool)]
 
     im -= roi.mean()
@@ -250,34 +249,37 @@ def zscore_normalization(im, mask):
 
 
 def mean_normalization(im, mask):
+    """Perform mean normalization"""
     roi = im[mask.astype(bool)]
     im -= roi.mean()
     return im
 
 
-def pad_center(array_list):
-    pad_width = [(3, 3) for n in range(len(array_list[0].shape))]
+def pad_center(array_list, padding=(3, 3)):
+    """For each of the arrays in array_list, pad the array with 0s for the
+    number of pixels specified in padding"""
+    pad_width = [padding for n in range(len(array_list[0].shape))]
     return [np.pad(a, pad_width=pad_width) for a in array_list]
 
 
 def from_zxy_to_xyz(array_list):
+    """Transpose the image dimensions from ZXY to XYZ coordinates"""
     return [np.transpose(a, axes=[1, 2, 0]) for a in array_list]
 
 
 def trim_zeros(img, mask):
     """Returns a trimmed view of an n-D array excluding any outer
-    regions which contain only zeros.
-    """
+    regions which contain only zeros"""
     slices = tuple(slice(idx.min(), idx.max() + 1) for idx in np.nonzero(mask))
     return img[slices], mask[slices]
 
 
 def get_nucleus_mask(img, res):
-    # batch calling different segmentation steps
-    # INPUT:
-    #       np_image : image numpy 3D array
-    # OUTPUT:
-    #       mask : segmented image as a binary 3D mask
+    """Batch calling different segmentation steps
+    INPUT:
+          img: image numpy 3D array
+          res: image resolution
+    """
 
     smooth_img = ski.filters.gaussian(img, sigma=(0.1 / res))
     otsu_thres = ski.filters.threshold_otsu(smooth_img)
@@ -296,12 +298,16 @@ def get_nucleus_mask(img, res):
 
 
 def plot_seg(img, mask, plane, output_path, contour=True, plot=False):
-    # Plots input image with contoured segmentation in a matrix of subplots
-    # with different slices in the indicated plane
-    # INPUT:
-    #       imgage : image numpy 3D array
-    #       seg_image : segmented image as a binary 3D mask
-    #       plane: plane to plot/slice (e.g. 'XY', )
+    """Plots input image with contoured segmentation in a matrix of subplots
+    with different slices in the indicated plane
+    INPUT:
+          img: image numpy 3D array
+          mask: segmented image as a binary 3D mask
+          plane: plane to plot/slice (e.g. 'XY', )
+          output_path: filename for the resulting image
+          contour: whether to plot the contour of the nucleus mask
+          plot: whether to plot the image also on the terminal
+    """
 
     n_bs = 3
     n_total = 15
@@ -356,14 +362,12 @@ def plot_seg(img, mask, plane, output_path, contour=True, plot=False):
 
 
 def get_output_filename(input_path, output_path, suffix="XY", extension=".png"):
-    # generates output filename for .png inspection images
-    # INPUT:
-    #       input_path : input filename of .czi image
-    #       output_path : working output folder
-    #       suffix: suffix to be added before file extension
-    # OUTPUT :
-    #       output filepath string
-
+    """Generates output filename for .png inspection images
+    INPUT:
+          input_path: input filename of .czi image
+          output_path: working output folder
+          suffix: suffix to be added before file extension
+    """
     filename = (
         os.path.splitext(os.path.basename(input_path))[0] + "_" + suffix + extension
     )
@@ -374,14 +378,13 @@ def get_output_filename(input_path, output_path, suffix="XY", extension=".png"):
 def get_output_filename_with_subfolder(
     input_path, output_path, suffix="XY", extension=".png"
 ):
-    # generates output filename for .png inspection images adding an
-    # intermediate subfolder
-    # INPUT:
-    #       input_path : input filename of .czi image
-    #       output_path : working output folder
-    #       suffix: suffix to be added before file extension
-    # OUTPUT :
-    #       output filepath string
+    """generates output filename for .png inspection images adding an
+    intermediate subfolder
+    INPUT:
+          input_path: input filename of .czi image
+          output_path: working output folder
+          suffix: suffix to be added before file extension
+    """
 
     filename = (
         os.path.splitext(os.path.basename(input_path))[0]
@@ -403,16 +406,16 @@ def czi_image_preprocessing(
     resize_z=True,
     normalization="z_score",
 ):
-    # batch method concatenating a number of functions to load image,
-    # re-sample, segment, export, and save .png and numpy images on disk
-    # INPUT:
-    #       czi_filepath: filename with .czi image
-    #       output_filepath: if not empty (default), then image an numpy
-    #       output is saved
-    #       channel_name : channel in the .czi file to be used
-    # OUTPUT:
-    #       nuc_mask: segmentated nucleus as binary numpy array
-    #       img: re-sampled input image as numpy array
+    """batch method concatenating a number of functions to load image,
+    re-sample, segment, export, and save .png and numpy images on disk
+    INPUT:
+          czi_filepath: filename with .czi image
+          output_filepath: where to save the resulting image and mask
+          channel_name : channel in the .czi file to be used
+          new_res: new image resolution for all dimensions through interpolation
+          resize: whether to resize the image
+          normalization: whether to apply a certain normalization method
+    """
 
     czi_img, pixel_sizes = load_czi_image(czi_filepath, channel_name)
 
@@ -446,11 +449,6 @@ def czi_image_preprocessing(
     max = np.max(img[nuc_mask.astype(bool)])
     img = (img - min) / (max - min)
 
-    # MAYBE I SHOULD ROUND TO 0 - 255 UINT, TO SAVE MEMORY
-    # THE ROI CAN BE EXTRACTED AND INTENSITIES OUTSIDE OF THE MASK ARE USUALLY
-    # NAN
-    # INTENSITY DISCRETIZATION - i.e. IN 32 BINS?
-
     # Normalize using z scores
     if normalization == "z_score":
         img = zscore_normalization(img, mask=nuc_mask)
@@ -459,9 +457,6 @@ def czi_image_preprocessing(
     elif normalization == "none":
         img = img
 
-    # Move the normalized intensities range back to the original (0, 256)
-    # img = (img - np.min(img)) / (np.max(img) - np.min(img)) * 256
-    # img = img.astype(np.uint8)
     print(img.shape)
 
     # plots
@@ -488,8 +483,8 @@ def czi_image_preprocessing(
 
 
 def get_morphometrics_from_largest_DIR(mask, im):
-    # gets morphometric b with volume and morphometric values for the larger
-    # DIR in the segmentation
+    """Get morphometric b with volume and morphometric values for the larger
+    DIR in the segmentation"""
 
     info_table = pd.DataFrame(
         ski.measure.regionprops_table(
@@ -520,15 +515,14 @@ def get_morphometrics_from_largest_DIR(mask, im):
 
 
 def get_surface_area(mask, sigma=2):
-    # reconstructs mesh surface on binary 3d mask and estimates a surface
-    # measure. Marching cubes parameters can be changed. I found these worked
-    # well
-    # INPUT
-    #       seg_image_morph: segmentated nucleus as binary numpy array
-    #       sigma: smoothing of border prior to the marching cubes algorithm
-    #       to avoid overfitting pixelized border
-    # OUTPUT
-    #       area: measured area of the fitted mesh
+    """Reconstructs mesh surface on binary 3d mask and estimates a surface
+    measure
+    INPUT
+          mask: segmentated nucleus as binary numpy array
+          sigma: smoothing of border prior to the marching cubes algorithm
+          to avoid overfitting pixelized border
+    """
+
     mask_smooth = ski.filters.gaussian(mask, sigma=sigma)
     verts, faces, normals, values = ski.measure.marching_cubes(
         mask_smooth, level=None, step_size=2
@@ -537,66 +531,18 @@ def get_surface_area(mask, sigma=2):
     return ski.measure.mesh_surface_area(verts, faces)
 
 
-def plot_IProfile_3D(im, mask, dist2bord, file_name=""):
-    # Method to plot an Average Mean vs. Distance to edge curve for a single
-    # nucleus with interquartile intervals
-    # INPUT:
-    #       np_image : image numpy 3D array
-    #       seg_image_morph: segmentated nucleus as binary numpy array
-    #       dist2bord: numpy array containing all the closest distances to
-    #       the border for each voxel
-    #       (euclidian distance transform)
-    #       filename: If provided (default is ''), then a .png image is
-    #       exported to the corresponding filename
-
-    mean_allint = np.mean(im[mask > 0.1])
-    q1_allint = np.quantile(im[mask > 0.1], 0.25)
-    q3_allint = np.quantile(im[mask > 0.1], 0.75)
-
-    MAX_DIST = 20
-    MIN_DIST = 5
-    THICK_INT = 1.5
-
-    mean_int, nvox, q1_int, q3_int = [
-        np.ones(MAX_DIST + MIN_DIST) * np.NaN for i in range(4)
-    ]
-
-    for lag, dist in enumerate(range(-MIN_DIST, MAX_DIST)):
-        if dist < 0:
-            i, j, k = np.where(
-                (dist2bord < np.abs(dist - THICK_INT))
-                & (dist2bord >= np.abs(dist))
-                & (mask < 0.2)
-            )
-        else:
-            i, j, k = np.where(
-                (dist2bord < (dist + THICK_INT)) & (dist2bord >= dist) & (mask > 0.9)
-            )
-        if i.shape[0] == 0:
-            continue
-
-        mean_int[lag] = np.mean(im[i, j, k]) / mean_allint
-        q1_int[lag] = np.quantile(im[i, j, k], 0.25) / mean_allint
-        q3_int[lag] = np.quantile(im[i, j, k], 0.75) / mean_allint
-        nvox[lag] = len(i)
-
-    plt.errorbar(
-        x=np.asarray(range(-MIN_DIST, MAX_DIST)),
-        y=mean_int,
-        yerr=[mean_int - q1_int, q3_int - mean_int],
-        fmt="o",
-        linestyle="-",
-    )
-    plt.axhline(y=q1_allint / mean_allint, color="r", linestyle="--", alpha=0.5)
-    plt.axhline(y=q3_allint / mean_allint, color="r", linestyle="--", alpha=0.5)
-    plt.title("Mean DAPI Intensity vs. Distance to Border")
-
-    if file_name != "":
-        plt.savefig(file_name)
-    plt.show()
-
-
 def plot_intensity_profile_3D(im, mask, dist2bord, res, max_dist=20, thickness=1.5):
+    """Method to plot an Average Mean vs. Distance to edge curve for a single
+    nucleus with interquartile intervals
+    INPUT:
+          img: image numpy 3D array
+          mask: segmentated nucleus as binary numpy array
+          dist2bord: numpy array containing all the closest distances to
+          the border for each voxel (euclidian distance transform)
+          res: image resolution
+          max_dist: maximum distance in pixels to measure
+          thickness: band thickness in pixels to measure
+    """
     q1_allint = np.quantile(im[mask > 0.1], 0.25)
     q3_allint = np.quantile(im[mask > 0.1], 0.75)
 
@@ -632,6 +578,7 @@ def plot_intensity_profile_3D(im, mask, dist2bord, res, max_dist=20, thickness=1
 
 
 def get_intensity_in_distance(im, mask, dist2bord, distance_range=(0, 10)):
+    """Get average pixel intensity value in the given distance range"""
     min_dist, max_dist = distance_range
 
     coords = tuple(
@@ -643,6 +590,8 @@ def get_intensity_in_distance(im, mask, dist2bord, distance_range=(0, 10)):
 
 
 def get_intensity_by_distance(im, mask, dist2bord, res, max_dist=20, thickness=1.5):
+    """Get average pixel intensity value by each pixel distance up until the
+    maximum distance specified"""
     int_df = pd.DataFrame()
 
     for dist in range(max_dist):
@@ -657,37 +606,17 @@ def get_intensity_by_distance(im, mask, dist2bord, res, max_dist=20, thickness=1
     return int_df
 
 
-def get_variogram_range(mask, im, res, mode="3D"):
-    # estimates variogram in a random subsample of voxels and outputs the
-    # effective range fitted to it
-    # INPUT:
-    #       np_image : image numpy 3D array
-    #       seg_image_morph: segmentated nucleus as binary numpy array
-    #       res : image resolution
-    # OUTPUT:
-    #       range: estimated effective range in micrometers
+def segment_condensates(im, mask, cluster_thresh=0.6, mode="absolute"):
+    """Segment DAPI-Intense Regions (DIRs) using the specified clustering
+    threshold
+    INPUT:
+        im: intensity image
+        mask: segmentation mask
+        cluster_thresh: threshold for the intensities to consider a DIR
+        mode: whether use the cluster threshold as absolute over all the
+        image pixel intensities or relative compared to the mean intensity
+    """
 
-    coords = np.where(mask > 0.5)
-
-    # random coordinates
-    N = 2000
-    random_idx = np.random.randint(0, len(coords[0]), N)
-
-    if mode == "3D":
-        ii, jj, kk = coords
-        values = np.fromiter((im[ii[i], jj[i], kk[i]] for i in random_idx), dtype=float)
-    elif mode == "2D":
-        ii, jj = coords
-        values = np.fromiter((im[ii[i], jj[i]] for i in random_idx), dtype=float)
-
-    coords = np.concatenate(([c[random_idx].reshape(-1, 1) for c in coords]), axis=1)
-    coords = coords / (res * 100)  # given in micrometers
-    # V = skg.Variogram(coords, values, maxlag=40/res*100)
-
-    return V.describe().get("effective_range")
-
-
-def segment_condensates(im, mask, cluster_thresh=1.8, mode="relative"):
     # Create binary mask with DIRs
     if mode == "relative":
         nucleus_mean = np.mean(im[mask > 0.5])
@@ -711,6 +640,7 @@ def segment_condensates(im, mask, cluster_thresh=1.8, mode="relative"):
 
 
 def get_distance_to_edge_by_DIR(df, dist2bord, DIRs_mask):
+    """Get the distance to the nuclear edge by each DIR of a DIRs mask"""
     dims = range(len(DIRs_mask.shape))
 
     for b in df.index:
@@ -736,98 +666,21 @@ def get_distance_to_edge_by_DIR(df, dist2bord, DIRs_mask):
     return df
 
 
-def calculate_convex_diff_3D(mask):
-    # Plot the difference between the image and the hull
-    convex_hull = ski.morphology.convex_hull_image(mask)
-    diff = convex_hull - mask
-    return np.mean(diff), np.sum(diff), np.sum(diff) / np.sum(convex_hull)
-
-
-def calculate_convex_diff_2D(mask, plane="XY"):
-    diff, total = [], []
-
-    if plane == "ZX":
-        mask = np.transpose(mask, axes=[2, 0, 1])
-
-    if plane == "ZY":
-        mask = np.transpose(mask, axes=[1, 0, 2])
-
-    for mask2d in mask:
-        if np.any(mask2d):
-            convex_hull = ski.morphology.convex_hull_image(mask2d)
-            diff.append(convex_hull - mask2d)
-            total.append(convex_hull)
-
-    # CORRECT FOR THE NUMBER OF Z DIMENSIONS
-    return np.mean(diff), np.sum(diff), np.sum(diff) / np.sum(total)
-
-
-# From https://github.com/rougier/numpy-100 (#87)
-def boxcount(Z, k):
-    S = np.add.reduceat(
-        np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),
-        np.arange(0, Z.shape[1], k),
-        axis=1,
-    )
-
-    # We count non-empty (0) and non-full boxes (k*k)
-    return len(np.where((S > 0) & (S < k * k))[0])
-
-
-def cubecount(Z, k):
-    S = np.add.reduceat(
-        np.add.reduceat(
-            np.add.reduceat(Z, np.arange(0, Z.shape[0], k), axis=0),
-            np.arange(0, Z.shape[1], k),
-            axis=1,
-        ),
-        np.arange(0, Z.shape[2], k),
-        axis=2,
-    )
-
-    # We count non-empty (0) and non-full cubes (k*k*k)
-    return len(np.where((S > 0) & (S < k * k * k))[0])
-
-
-# From https://gist.github.com/rougier/e5eafc276a4e54f516ed5559df4242c0
-# THIS SHOULD BE MENTIONED AND THE AUTHOR
-def fractal_dimension(mask, threshold=0.9, mode="2D"):
-    """mask should be a two dimensional and binary image"""
-
-    # Minimal dimension of image
-    p = min(mask.shape)
-
-    # Greatest power of 2 less than or equal to p
-    n = 2 ** np.floor(np.log(p) / np.log(2))
-
-    # Extract the exponent
-    n = int(np.log(n) / np.log(2))
-
-    # Build successive box sizes (from 2**n down to 2**1)
-    sizes = 2 ** np.arange(n, 1, -1)
-
-    # Actual box counting with decreasing size
-    if mode == "2D":
-        counts = [boxcount(mask, size) for size in sizes]
-    elif mode == "3D":
-        counts = [cubecount(mask, size) for size in sizes]
-
-    # Fit the successive log(sizes) with log (counts)
-    coeffs = np.polyfit(np.log(sizes), np.log(counts), 1)
-
-    return -coeffs[0]
-
-
 def dist(p1, p2):
+    """Calculate the euclidean distance between two points"""
     return np.sqrt(np.sum(np.square(np.array(p1) - np.array(p2))))
 
 
 def calculate_ellipse_perimeter(a, b):
-    # PI * ( 3*(a + b) - SQRT( (3*a + b) * (a + 3*b) ) )
+    """Calculate the ellipse of a parameter with major axis length a and minor
+    axis length b"""
+    # Formula: PI * ( 3*(a + b) - SQRT( (3*a + b) * (a + 3*b) ) )
     return np.pi * (3 * (a + b) - np.sqrt((3 * a + b) * (a + 3 * b)))
 
 
 def excess_of_perimeter_ellipse(obj):
+    """Calculaten the Excess of Perimeter (EOP) of an object compared to an
+    ellipse with the same major and minor axis lengths"""
     ellipse_p = calculate_ellipse_perimeter(
         obj.major_axis_length / 2, obj.minor_axis_length / 2
     )
@@ -836,7 +689,7 @@ def excess_of_perimeter_ellipse(obj):
 
 
 def get_slide(im, mask, mode="middle", plane="XY"):
-    """ "The incoming array must be 3D in format XYZ"""
+    """Obtain a 2D slide out of a 3D numpy array"""
 
     assert len(im.shape) == 3, "input matrices are not 3D"
     assert im.shape == mask.shape, "image shape and mask shape are not equal"
@@ -879,6 +732,7 @@ def get_slide(im, mask, mode="middle", plane="XY"):
 
 
 def get_nuclear_metrics_3D(mask, im, res):
+    """Extract features from a 3D nuclear image and mask"""
     label_mask = ski.measure.label(mask)
 
     df = pd.DataFrame(
@@ -914,21 +768,12 @@ def get_nuclear_metrics_3D(mask, im, res):
     height_stds_x = [np.count_nonzero(m, axis=1).std() for m in mask]
     df["height_deviation"] = np.array(height_stds_x).mean() * res
 
-    # Average chromatin packing ratio p = DNA mass / Volume
-    hsc_dna_mass = 7
-    df["chrom_packing_ratio"] = hsc_dna_mass / df["volume"]
-
-    df["entropy"] = ski.measure.shannon_entropy(im)
-
     # Elongation is the ratio length/width of the bounding box
     df["elongation"] = df["length"] / df["width"]
     df["aspect_ratio"] = df["height"] / df["length"]
 
     # Invaginations. Solidity is *ObjectArea/ConvexHullArea*
     df["invagination_prop"] = 1 - df["solidity"]
-
-    # Fractal dimension
-    df["fractal_dim"] = fractal_dimension(mask, mode="3D")
 
     # Get surface area using Didac's function
     df["surface_area"] = get_surface_area(mask) * res**2
@@ -956,6 +801,7 @@ def get_nuclear_metrics_3D(mask, im, res):
 
 
 def get_DIRs_metrics_2D(DIRs_mask, im, res):
+    """Extract features from a 2D nuclear image and mask"""
     df = pd.DataFrame(
         ski.measure.regionprops_table(
             DIRs_mask.astype(np.uint8), im, properties=properties_2d
@@ -982,15 +828,9 @@ def get_DIRs_metrics_2D(DIRs_mask, im, res):
 
     df["area/perimeter"] = df["area"] / df["perimeter"]
 
-    df["entropy"] = ski.measure.shannon_entropy(im * DIRs_mask)
-
     # Roundness or circularity - avoid values higher than 1 (infinity)
     roundness = (4.0 * np.pi * df["area"]) / (df["perimeter"] ** 2)
     df["roundness"] = min(1.0, roundness.values[0])
-
-    # RE-WRITE THE FOLLOWING LINES
-    # *ObjectArea/Area of circle with the same perimeter*
-    # IT IS THE SAME AS ROUNDNESS?
     df["compactness"] = (4.0 * np.pi * df["area"]) / (df["perimeter"] ** 2)
 
     # Elongation is the ratio length/width of the bounding box
@@ -1021,6 +861,8 @@ def get_DIRs_metrics_2D(DIRs_mask, im, res):
 
 
 def get_DIRs_metrics_3D(DIRs_mask, im, res):
+    """Extract features from a 3D nuclear image and DIRs mask"""
+
     df = pd.DataFrame(
         ski.measure.regionprops_table(
             DIRs_mask.astype(np.uint8), im, properties=properties_3d_DIR
@@ -1045,10 +887,6 @@ def get_DIRs_metrics_3D(DIRs_mask, im, res):
     df["length"] = (df["bbox-4"] - df["bbox-1"]) * res
     df["height"] = (df["bbox-5"] - df["bbox-2"]) * res
 
-    # Average chromatin packing ratio p = DNA mass / Volume
-    hsc_dna_mass = 7
-    df["chrom_packing_ratio"] = hsc_dna_mass / df["volume"]
-
     # Elongation is the ratio length/width of the bounding box
     df["elongation"] = df["length"] / df["width"]
     df["aspect_ratio"] = df["height"] / df["length"]
@@ -1062,8 +900,6 @@ def get_DIRs_metrics_3D(DIRs_mask, im, res):
 
     df["surface/volume"] = df["surface_area"] / df["volume"]
 
-    # Invaginations. Solidity is *ObjectArea/ConvexHullArea*
-    df["invagination_prop"] = 1 - df["solidity"]
     dims = range(len(DIRs_mask.shape))
 
     # assigns condensate domain label
@@ -1086,9 +922,8 @@ def get_DIRs_metrics_3D(DIRs_mask, im, res):
 
 
 def filter_DIRs(DIRs_mask, df, query):
+    """Given a DIRs mask and DIRs dataframe, filter those depending on query"""
     DIRs_mask_filt = DIRs_mask.copy()
-
-    # DO BY MASK PROPORTION
 
     # Remove DIRs from the mask based on criteria
     df_out = df.query(query)
@@ -1097,7 +932,6 @@ def filter_DIRs(DIRs_mask, df, query):
         df.drop(index=b, inplace=True)
 
     df["n"] = df.shape[0]
-
     df.reset_index(drop=True, inplace=True)
 
     # Re-label the segmented DIRs in the mask after cleaning
@@ -1108,6 +942,7 @@ def filter_DIRs(DIRs_mask, df, query):
 
 
 def groupby_and_count(df, group1, group2):
+    """Perform group by and count for two groups in a pandas data frame"""
     grouped = df.groupby([group1, group2]).size()
     g1_list = [g1 for g1, _ in grouped.index]
     g2_list = [g2 for _, g2 in grouped.index]
