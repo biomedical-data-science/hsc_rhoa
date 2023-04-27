@@ -15,7 +15,10 @@ Jupyter Notebooks:
 - **czi_exploration_and_outlier_detection.ipynb**: Contains a basic exploration of ZEISS `.czi` images format and metadata, along with outlier detection thresholds and plots. We use `AICSImageIO`, a Python library that facilitates working with microscopy images.
 - **inensity_profiles.ipynb**: Contains the creation of intensity profiles as a function of distance from the segmented nuclear border.
 - **extract_features.ipynb**: Contains the extraction of manual features from `.npz` matrices and the creation of a feature data table using `pandas`.
-- **feature_multidimensional_analysis.ipynb**: Contains the multidimensional analyses (PCA, UMAP, K-Means clustering) and the code employed to reproduce the plots shown in the manuscript.
+- **feature_pca_analysis.ipynb**: Contains the multidimensional PCA analyses.
+- **feature_umap_analysis.ipynb**: Contains the multidimensional UMAP analyses and K-Means clustering.
+- **young_aged_treated_plot.ipynb**: Contains code to generate comparison of distribution of each feature across Young, Aged and Treated + RhoA inhibition treatment HSCs.
+
 
 ## Dependencies
 
