@@ -1,7 +1,7 @@
 # RhoA role in HSC aging
-Repository hosting the source code developed for the paper *'Reducing RhoA activity reverts the epigenetic drift associated to nuclear stretching in aged hematopoietic stem cells'*.
+Repository hosting the source code developed for the paper *'Targeting RhoA activity rejuvenates aged hematopoietic stem cells by reducing nuclear stretching'*.
 
-The project relies on a colaboration between the Biomedical Data Science lab at ISGlobal, led by Paula Petrone, and the Stem Cell Aging at lab at IDIBELL led by Carolina Florian.
+The analyses from this part of the project relies on a colaboration between the Biomedical Data Science lab at ISGlobal, led by Paula Petrone, and the Stem Cell Aging at lab at IDIBELL led by Carolina Florian.
 
 Here, we analize microscope images of Hematopoietic Stem Cells (HSCs) nuclei tainted with DAPI fluorescent marker. The raw data coming from a ZEISS microscope in `.czi` format is first pre-processed into `numpy`'s `.npz` format. Downstream analyses are carried on these files, which includes intensity by distance profiles and multidimensional analysis from extracted image features.
 
