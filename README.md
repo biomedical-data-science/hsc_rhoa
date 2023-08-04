@@ -13,6 +13,7 @@ Python scripts:
 
 Jupyter Notebooks:
 - **czi_exploration_and_outlier_detection.ipynb**: Contains a basic exploration of ZEISS `.czi` images format and metadata, along with outlier detection thresholds and plots. We use `AICSImageIO`, a Python library that facilitates working with microscopy images.
+- **czi_preprocessing.ipynb**: Contains a call to `czi_preprocessing.py` to transform from raw ZEISS `.czi` images to preprocessed `.npz` matrices.
 - **inensity_profiles.ipynb**: Contains the creation of intensity profiles as a function of distance from the segmented nuclear border.
 - **extract_features.ipynb**: Contains the extraction of manual features from `.npz` matrices and the creation of a feature data table using `pandas`.
 - **feature_pca_analysis.ipynb**: Contains the multidimensional PCA analyses.
