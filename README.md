@@ -26,7 +26,7 @@ Jupyter Notebooks:
 
 ## Software Requirements
 
-Reproducing the hosted Jupyter Notebooks requires only a standard PC with enough RAM to support the in-memory operations. The code was developed in a Linux Operative System, with Ubuntu 22.04.4 version and 13th Gen Intel® Core™ i7 CPU with 16 GB of RAM. 
+Reproducing the hosted Jupyter Notebooks requires only a standard PC with enough RAM to support the in-memory operations. The code was developed and tested in a Linux Operative System, with Ubuntu 22.04.4 version and 13th Gen Intel® Core™ i7 CPU with 16 GB of RAM. 
 
 ## Python Dependencies
 
