@@ -30,7 +30,7 @@ Reproducing the hosted Jupyter Notebooks requires only a standard PC with enough
 
 ## Python Dependencies
 
-The code was developed using a conda environment with `Python==3.11.4` the following Python packages and versions:
+The code was developed using a conda environment with `Python==3.11.4` and the following Python packages:
 
 ```
 aicsimageio==4.9.2
