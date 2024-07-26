@@ -1,9 +1,10 @@
 # RhoA role in HSC aging
 Repository hosting the source code developed for the paper *'Targeting RhoA activity rejuvenates aged hematopoietic stem cells by reducing nuclear stretching'*.
 
+Here, we analize confocal microscopy images of Hematopoietic Stem Cells (HSCs) nuclei tainted with DAPI fluorescent marker. The raw data coming from a ZEISS microscope in `.czi` format is first pre-processed into `numpy`'s `.npz` format. Downstream analyses are carried on these files, which includes intensity by distance profiles and multidimensional analysis from extracted image features. The Jupyter Notebooks include all the necessary steps to replicate the analyses from the paper, along with the expected results.
+
 The analyses from this part of the project relies on a colaboration between the Biomedical Data Science lab at ISGlobal, led by Paula Petrone, and the Stem Cell Aging at lab at IDIBELL led by Carolina Florian. Both centers are located in Barcelona, Spain.
 
-Here, we analize confocal microscopy images of Hematopoietic Stem Cells (HSCs) nuclei tainted with DAPI fluorescent marker. The raw data coming from a ZEISS microscope in `.czi` format is first pre-processed into `numpy`'s `.npz` format. Downstream analyses are carried on these files, which includes intensity by distance profiles and multidimensional analysis from extracted image features.
 
 ## Source code
 
@@ -23,26 +24,32 @@ Jupyter Notebooks:
 - **08_feature_umap_analysis_zscore_MP.ipynb**: Contains the multidimensional UMAP analyses and K-Means clustering on the identified relevant features for HSCs and myeloid progenitor (MP) cell nuclei.
 
 
-## Dependencies
+## Software Requirements
 
-The code was developed in a local machine using a conda environment with the following packages and versions:
+Reproducing the hosted Jupyter Notebooks requires only a standard PC with enough RAM to support the in-memory operations. The code was developed in a Linux Operative System, with Ubuntu 22.04.4 version and 13th Gen Intel® Core™ i7 CPU with 16 GB of RAM. 
 
-`aicsimageio==4.9.2`
+## Python Dependencies
 
-`matplotlib==3.7.1`
+The code was developed using a conda environment with `Python==3.11.4` the following Python packages and versions:
 
-`numpy==1.23.5`
+```
+aicsimageio==4.9.2
 
-`pandas==1.5.3`
+matplotlib==3.7.1
 
-`scikit-image==0.20.0`
+numpy==1.23.5
 
-`scikit-learn==1.1.3`
+pandas==1.5.3
 
-`scipy==1.11.4`
+scikit-image==0.20.0
 
-`seaborn==0.12.2`
+scikit-learn==1.1.3
 
-`statannotations==0.6.0`
+scipy==1.11.4
 
-`umap-learn==0.5.5`
+seaborn==0.12.2
+
+statannotations==0.6.0
+
+umap-learn==0.5.5
+```
