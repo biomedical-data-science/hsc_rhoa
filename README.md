@@ -1,10 +1,13 @@
 # RhoA role in HSC aging
-Repository hosting the source code developed for the paper *'Targeting RhoA activity rejuvenates aged hematopoietic stem cells by reducing nuclear stretching'*.
+Repository hosting the source code developed for the imaging part of the paper *'Targeting RhoA activity rejuvenates aged hematopoietic stem cells by reducing nuclear stretching'*.
 
-Here, we analize confocal microscopy images of Hematopoietic Stem Cells (HSCs) nuclei tainted with DAPI fluorescent marker. The raw data coming from a ZEISS microscope in `.czi` format is first pre-processed into `numpy`'s `.npz` format. Downstream analyses are carried on these files, which includes intensity by distance profiles and multidimensional analysis from extracted image features. The Jupyter Notebooks include all the necessary steps to replicate the analyses from the paper, along with the expected results.
+Here, we analize confocal microscopy images of Hematopoietic Stem Cells (HSCs) nuclei tainted with DAPI fluorescent marker. The raw data coming from a ZEISS microscope in `.czi` format is first pre-processed into `numpy`'s `.npz` format. Downstream analyses are carried on these files, which includes intensity by distance profiles and multidimensional analysis from extracted image features.
 
-The analyses from this part of the project relies on a colaboration between the Biomedical Data Science lab at ISGlobal, led by Paula Petrone, and the Stem Cell Aging at lab at IDIBELL led by Carolina Florian. Both centers are located in Barcelona, Spain.
+The analyses of this part of the project relies on a colaboration between the Biomedical Data Science lab at ISGlobal, led by Paula Petrone, and the Stem Cell Aging at lab at IDIBELL led by Carolina Florian. Both centers are located in Barcelona, Spain.
 
+## Source data
+
+The microscopy images data used in these analyses can be downloaded from XXX.
 
 ## Source code
 
@@ -18,15 +21,21 @@ Jupyter Notebooks:
 - **03_inensity_profiles.ipynb**: Contains the analyses of intensity profiles as a function of distance from the segmented nuclear border.
 - **04_extract_features.ipynb**: Contains the extraction of "manual" features from `.npz` matrices and the creation of a feature data table using `pandas`.
 - **05_comparison_boxplots.ipynb**: Contains a series of boxplots showing differences in univariate features among biological conditions of HSCs.
-- **06A_aged_young_umap_analysis_zscore**: Contains the identification of relevant features among aged and young HSCs via statistical significance and correlation analyses.
-- **06B_aged_agedri_umap_analysis_zscore**: Contains the identification of relevant features among aged and aged treated with RhoA inhibitor HSCs via statistical significance and correlation analyses.
-- **07_feature_umap_analysis_zscore.ipynb**: Contains the multidimensional UMAP analyses and K-Means clustering on the identified relevant features for the different biological conditions of HSCs.
-- **08_feature_umap_analysis_zscore_MP.ipynb**: Contains the multidimensional UMAP analyses and K-Means clustering on the identified relevant features for HSCs and myeloid progenitor (MP) cell nuclei.
+- **06A_aged_young_umap_analysis**: Contains the identification of relevant features among aged and young HSCs via statistical significance and correlation analyses.
+- **06B_aged_agedri_umap_analysis**: Contains the identification of relevant features among aged and aged treated with RhoA inhibitor HSCs via statistical significance and correlation analyses.
+- **07_feature_umap_analysis.ipynb**: Contains the multidimensional UMAP analyses and K-Means clustering on the identified relevant features for the different biological conditions of HSCs.
+- **08_feature_umap_analysis_MP.ipynb**: Contains the multidimensional UMAP analyses and K-Means clustering on the identified relevant features for HSCs and myeloid progenitor (MP) cell nuclei.
 
+
+## Installation and Use Guide
+
+No installation is needed, only a downloaded copy of this repository. Data folder path must be changed to the ones specified by the user according to their directory structure.
+
+The Jupyter Notebooks include all the necessary steps to replicate the analyses from the paper, along with the expected results. Code execution shouldn't require much computational time, except for `02_czi_preprocessing.ipynb` and `04_extract_features.ipynb`, might might take a few hours on a normal CPU.
 
 ## Software Requirements
 
-Reproducing the hosted Jupyter Notebooks requires only a standard PC with enough RAM to support the in-memory operations. The code was developed and tested in a Linux Operative System, with Ubuntu 22.04.4 version and 13th Gen Intel® Core™ i7 CPU with 16 GB of RAM. 
+Reproducing the hosted Jupyter Notebooks requires only a standard PC with enough RAM to support the in-memory operations, no extra hardware is needed. The code was developed and tested in a Linux Operative System, with Ubuntu 22.04.4 version and 13th Gen Intel® Core™ i7 CPU with 16 GB of RAM. 
 
 ## Python Dependencies
 
