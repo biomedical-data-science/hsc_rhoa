@@ -7,7 +7,7 @@ The project is a collaboration between the Biomedical Data Science lab at ISGlob
 
 ## Source data
 
-The microscopy image data used in these analyses can be downloaded from [INSERT LINK HERE].
+The microscopy image data used in these analyses can be downloaded from [https://doi.org/10.34810/data697] (Link will be made public after publication).
 
 ## Source code
 
