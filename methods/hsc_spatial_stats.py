@@ -150,9 +150,9 @@ def resize_image(img, pixel_sizes, new_res=0.1, resize_z=True):
     """Given an image and the original pixel sizes, return the image resized
     to the new resolution"""
     new_shape = (
-        np.round(img.shape[0] * pixel_sizes.Z / new_res),
-        np.round(img.shape[1] * pixel_sizes.X / new_res),
-        np.round(img.shape[2] * pixel_sizes.Y / new_res),
+        np.round(img.shape[0] * pixel_sizes["Z"] / new_res),
+        np.round(img.shape[1] * pixel_sizes["X"] / new_res),
+        np.round(img.shape[2] * pixel_sizes["Y"] / new_res),
     )
 
     # Check that the number of pixels won't be bigger in X and Y

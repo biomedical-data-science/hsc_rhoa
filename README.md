@@ -14,6 +14,8 @@ The microscopy image data used in these analyses can be downloaded from [this li
 Python scripts:
 - **methods/hsc_spatial_stats.py**: Contains main functions and utils used in the Jupyter Notebooks.
 - **methods/czi_preprocessing.py**: Pre-process `.czi` raw images to generate `.npz` processed matrices.
+- **methods/seg_utils.py**: Contains util functions for the assessment and visualization of image segmentation.
+- **methods/utils.py**: Contains short util functions used throughout the code.
 
 Jupyter Notebooks:
 - **01_czi_exploration_and_outlier_detection.ipynb**: Explores ZEISS `.czi` images format and metadata, includes outlier detection thresholds and plots. We use `AICSImageIO`, a Python library that facilitates working with microscopy images.
@@ -24,14 +26,16 @@ Jupyter Notebooks:
 - **06A_aged_young_umap_analysis**: Contains the identification of relevant features among aged and young HSCs via statistical significance and correlation analyses.
 - **06B_aged_agedri_umap_analysis**: Contains the identification of relevant features among aged and aged treated with RhoA inhibitor HSCs via statistical significance and correlation analyses.
 - **07_feature_umap_analysis.ipynb**: Contains multidimensional UMAP analyses and K-Means clustering on the identified relevant features for different biological conditions of HSCs.
+- **07B_clustering_validation.ipynb**: Contains quality checks on the K-Means clustering.
 - **08_feature_umap_analysis_MP.ipynb**: Contains multidimensional UMAP analyses and K-Means clustering on the identified relevant features for HSCs and myeloid progenitor (MP) cell nuclei.
-
+- **09A_seg_manual_validation.ipynb**: Contains the comparison of automatic segmentation using Otsu vs. manual annotation on 3D nuclei of young, aged, and aged + Ri HSC nuclei images. Manual annotation was performed using `Napari`.
+- **09B_seg_visualization.ipynb**: Contains visual comparisons of automatic vs. manual segmentation of HSC images.
 
 ## Installation and Use Guide
 
 No installation is needed; simply download a copy of this repository and update the data folder paths according to your directory structure.
 
-The Jupyter Notebooks contain all necessary steps to replicate the analyses from the paper, along with the expected results. Code execution is generally fast, except for `02_czi_preprocessing.ipynb` and `04_extract_features.ipynb`, might take a few hours of computing time on a standard CPU.
+The Jupyter Notebooks contain all necessary steps to replicate the analyses from the paper, along with the expected results. Code execution is generally fast, except for `02_czi_preprocessing.ipynb` and `04_extract_features.ipynb`, which, depending on dataset size, might take a few hours of computing time on a standard CPU.
 
 ## Software Requirements
 
@@ -61,4 +65,6 @@ seaborn==0.12.2
 statannotations==0.6.0
 
 umap-learn==0.5.5
+
+napari==0.6.1
 ```
