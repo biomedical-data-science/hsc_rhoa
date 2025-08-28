@@ -7,7 +7,7 @@ The project is a collaboration between the Biomedical Data Science lab at ISGlob
 
 ## Source data
 
-The microscopy image data used in these analyses can be downloaded from [this link](https://doi.org/10.34810/data697). (Link will be made public after publication).
+The microscopy image data used in these analyses can be downloaded from [this link](https://doi.org/10.34810/data697). (Link will be made public after publication). A small subset of the dataset containing 3 samples for each Young, Aged, and Aged treated with RhoA inhibitor can be found in the `data` directory, alonside 3D manual annotations.
 
 ## Source code
 
@@ -29,7 +29,7 @@ Jupyter Notebooks:
 - **07B_clustering_validation.ipynb**: Contains quality checks on the K-Means clustering.
 - **08_feature_umap_analysis_MP.ipynb**: Contains multidimensional UMAP analyses and K-Means clustering on the identified relevant features for HSCs and myeloid progenitor (MP) cell nuclei.
 - **09A_seg_manual_validation.ipynb**: Contains the comparison of automatic segmentation using Otsu vs. manual annotation on 3D nuclei of young, aged, and aged + Ri HSC nuclei images. Manual annotation was performed using `Napari`.
-- **09B_seg_visualization.ipynb**: Contains visual comparisons of automatic vs. manual segmentation of HSC images.
+- **09B_seg_visualization.ipynb**: Contains visual examples and comparisons of image segmentations at both nucleus level and DAPI Intense Regions level, along with intensity distribution comparison.
 
 ## Installation and Use Guide
 
