@@ -1,3 +1,8 @@
+# As specified in the Methods section of the article:
+
+# Images acquired with a different microscope and images belonging to
+# experiments in which more than 30 days passed between nucleus staining
+# and image data acquisition were excluded from these analyses.
 batches_out = [
     "20191128PlaminAged",
     "20191128PlaminYoung",
